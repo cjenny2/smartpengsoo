@@ -50,10 +50,12 @@ while True:
                     hi=spshi.hi()
                     hi.start()
                 elif r2==CapTure:
+                    cap = cv2.VideoCapture(0)
                     ret, frame = cap.read()
+                    cv2.imshow('divx', frame)
                     cv2.imwrite("c.jpg",frame)
-                elif r2==End:
                     cap.release()
+                elif r2==End:
                     break
             
             except:
