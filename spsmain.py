@@ -4,7 +4,7 @@ import speech_recognition as sr
 import spsmusic
 import spshi
 
-music_start = '노래 재생'
+music_start = '노래'
 hi_start = '인사'
 retry = '다시'
 order = ['명령:','입력완료']
