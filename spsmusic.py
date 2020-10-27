@@ -1,44 +1,76 @@
 import pygame
 import speech_recognition as sr
+import random
 
 class music:
+
+    
     def __init__(self):
-        self.filename1= 'music/Dawn.mp3'
-        self.filename2= 'music/Tomorrow.mp3'
+        self.stop_cmd = '그만'
+        self.next_cmd = '다음'
+        
+        self.music_cmd = ["Playing... - func => playingmusic", "명령 : 1. 그만 | 2. 다음", "명령을 확인중...", "다시 말해 주세요.", "재생을 정지합니다."]
+
+        self.filename = ['music/Do It.mp3', 'music/noma - Color.mp3', 'music/Sakura.mp3', 'music/Dawn.mp3', 'music/Tomorrow.mp3']
+
+        self.music_num = random.randrange(0,5)
+        
         self.initMixer()
         self.r = sr.Recognizer()
-        self.playmusic(self.filename1)
+        self.playmusic(self.filename[self.music_num])
+        
     def playmusic(self,soundfile):
         pygame.init()
         pygame.mixer.init()
         self.clock= pygame.time.Clock()
         pygame.mixer.music.load(soundfile)
         pygame.mixer.music.play()
-        while pygame.mixer.music.get_busy(): # 파일이 재생되고 있는동안 True
-            print("Playing... - func => playingmusic")
+
+        count = self.music_num
+        
+        
+        while pygame.mixer.music.get_busy():
+            #print("Playing... - func => playingmusic")
+            print(self.music_cmd[0])
+            
             self.clock.tick(1000) # 초당 1000프레임이상이 안되게 제한
+            
             with sr.Microphone() as source:
                 self.r.adjust_for_ambient_noise(source)
-                print("명령")
+                print("%s번째 곡 : %s"%((count%5)+1, self.filename[count%5]))
+
+                #print("명령 : 1. 그만 | 2. 다음")
+                print(self.music_cmd[1])
+                
                 self.audio_text = self.r.listen(source)
                 try :
-                    print("다 들었음")
+                    #print("명령을 확인중...")
+                    print(self.music_cmd[2])
+                    
                     r2=self.r.recognize_google(self.audio_text,language='ko-KR')
                     print(r2)
-                    if '멈춰' in r2:
-                        pygame.mixer.music.stop()
-                        #stopmusic()
+                    
+                    if self.stop_cmd in r2:
+                        self.stopmusic()
+                        
+                    elif self.next_cmd in r2:
+                        count+=1
+                        self.playmusic(self.filename[count%5])
                     
                 except KeyboardInterrupt:
                     self.stopmusic()
                     print("\nPlay stopped by user")
 
                 except:
-                    print("진행중")
+                    #print("다시 말해 주세요.")
+                    print(self.music_cmd[3])
+                    print("")
          
  
-    def stopmusic(self): # 재생 정지
+    def stopmusic(self):
         """stop currently playing music"""
+        #print("재생을 정지합니다.")
+        print(self.music_cmd[4])
         pygame.mixer.music.stop()
     
     def getmixerargs(self):
